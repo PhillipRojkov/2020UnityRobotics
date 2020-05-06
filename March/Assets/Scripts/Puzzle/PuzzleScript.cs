@@ -4,13 +4,21 @@ using UnityEngine;
 
 public class PuzzleScript : MonoBehaviour
 {
+    [SerializeField] private GameObject player;
+
     [SerializeField] private int puzzleSize = 3;
 
     [SerializeField] private int numberOfPieces = 4;
 
+    [SerializeField] private int numberOfNodes = 2;
+
     private GameObject[,] pieces;
 
     [SerializeField] private GameObject piecesParent;
+
+    [SerializeField] private GameObject nodesParent;
+
+    private GameObject[,] nodes;
 
     bool moving = false; //Returns true if pieces are currentl moving. Used to only allow further inputs until after all pieces are done repositioning
 
@@ -25,6 +33,15 @@ public class PuzzleScript : MonoBehaviour
             Transform child = piecesParent.transform.GetChild(i);
             PuzzlePieceScript puzzlePieceScript = child.GetComponent<PuzzlePieceScript>();
             pieces[(int)puzzlePieceScript.position.x, (int)puzzlePieceScript.position.y] = child.gameObject;
+        }
+
+        nodes = new GameObject[puzzleSize, puzzleSize]; //Intialize nodes array
+
+        for (int i = 0; i < numberOfNodes; i++)
+        {
+            Transform child = nodesParent.transform.GetChild(i);
+            PuzzlePieceScript puzzlePieceScript = child.GetComponent<PuzzlePieceScript>();
+            nodes[(int)puzzlePieceScript.position.x, (int)puzzlePieceScript.position.y] = child.gameObject;
         }
     }
 
@@ -337,6 +354,22 @@ public class PuzzleScript : MonoBehaviour
             }
             ReArray();
         } //End of Move Down
+
+        //Quit puzzle
+        if (Input.GetKeyDown("q"))
+        {
+            QuitPuzzle();
+        }
+    }
+
+
+    void QuitPuzzle()
+    {
+        PlayerMove playerMove = player.GetComponent<PlayerMove>();
+
+        playerMove.inPuzzle = false;
+
+        this.enabled = false;
     }
 
 
@@ -356,6 +389,65 @@ public class PuzzleScript : MonoBehaviour
             Transform child = piecesParent.transform.GetChild(i);
             PuzzlePieceScript puzzlePieceScript = child.GetComponent<PuzzlePieceScript>();
             pieces[(int)puzzlePieceScript.position.x, (int)puzzlePieceScript.position.y] = child.gameObject;
+        }
+    }
+
+
+    void CalcConnectivity() //Determine if pieces are connected to nodes and ultimately win condition
+    {
+        for (int i = 0; i < puzzleSize; i++)
+        {
+            for (int j = 0; j < puzzleSize; j++)
+            {
+                if (nodes[i,j] != null)
+                {
+                    if (pieces[i,j] != null) //A piece is connected to a node
+                    {
+                        //Check up
+                        if (j + 1 < puzzleSize) //Makes sure that we are not out of the bounds of the array
+                        {
+                            if (pieces[i, j + 1] != null) //if there is a piece k units above
+                            {
+                                //pieces[i, j + 1] is connected
+
+                                //Check if this piece is on a node for win condition
+                            }
+                        }
+                        //Check down
+                        if (j - 1 >= 0) //Makes sure that we are not out of the bounds of the array
+                        {
+                            if (pieces[i, j - 1] != null) //if there is a piece k units below
+                            {
+                                //pieces[i, j - 1] is connected
+
+                                //Check if this piece is on a node for win condition
+                            }
+                        }
+
+                        //Check left
+                        if (i - 1 >= 0) //Makes sure that we are not out of the bounds of the array
+                        {
+                            if (pieces[i - 1, j] != null) //if there is a piece k units left
+                            {
+                                //pieces[i + 1, j] is connected
+
+                                //Check if this piece is on a node for win condition
+                            }
+                        }
+
+                        //Check right
+                        if (i + 1 < puzzleSize) //Makes sure that we are not out of the bounds of the array
+                        {
+                            if (pieces[i + 1, j] != null) //if there is a piece k units left
+                            {
+                                //pieces[i + 1, j] is connected
+
+                                //Check if this piece is on a node for win condition
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

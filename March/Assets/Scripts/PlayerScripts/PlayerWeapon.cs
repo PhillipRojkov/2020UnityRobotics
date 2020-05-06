@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlayerWeapon : MonoBehaviour
 {
+    [SerializeField] private float useDistance = 1.5f;
     [SerializeField] private float pistolDamage = 20;
     [SerializeField] private float fireRate = 0.25f;
     [SerializeField] private GameObject camera;
@@ -61,7 +62,25 @@ public class PlayerWeapon : MonoBehaviour
         {
             pistolAnimator.SetBool("Fire", false); //Switch off fire animation
         }
+
+        if (Input.GetButton("Use")) //Use button
+        {
+            RaycastHit use;
+            if (Physics.Raycast(camera.transform.position, camera.transform.forward, out use, useDistance))
+            {
+                if (use.transform.gameObject.CompareTag("Puzzle"))
+                {
+                    PuzzleScript puzzleScript = use.transform.gameObject.GetComponent<PuzzleScript>();
+
+                    puzzleScript.enabled = true; //Turn on puzzle
+
+                    PlayerMove playerMove = this.gameObject.GetComponent<PlayerMove>();
+                    playerMove.inPuzzle = true; //Disable movement
+                }
+            }
+        }
     }
+
 
     private IEnumerator ShotEffect() //Create the line renderer from the barrel of the gun to the hit point
     {

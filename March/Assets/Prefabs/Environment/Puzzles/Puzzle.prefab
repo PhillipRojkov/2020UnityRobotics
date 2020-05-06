@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 7093049066452837282}
   - component: {fileID: 2405753864054041033}
   - component: {fileID: 4437115415142331285}
+  - component: {fileID: 4404290278128436095}
   m_Layer: 0
   m_Name: Piece2
   m_TagString: Untagged
@@ -81,6 +82,24 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &4404290278128436095
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 83182184016277278}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b503bc139daf43e9b6260b70971c623, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  puzzleSize: 3
+  speed: 0.4
+  unconnected: {fileID: 0}
+  connected: {fileID: 0}
+  moving: 0
+  position: {x: 1, y: 2}
 --- !u!1 &315118958697355354
 GameObject:
   m_ObjectHideFlags: 0
@@ -731,9 +750,10 @@ GameObject:
   m_Component:
   - component: {fileID: 8764357951894160287}
   - component: {fileID: 4087302438351961784}
+  - component: {fileID: 1727003297194692805}
   m_Layer: 0
   m_Name: Puzzle
-  m_TagString: Untagged
+  m_TagString: Puzzle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -763,12 +783,28 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1759488722528449084}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bab01edb81c634299b386458148aa303, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 0}
   puzzleSize: 3
+  numberOfPieces: 4
+  piecesParent: {fileID: 7054320367816922095}
+--- !u!65 &1727003297194692805
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1759488722528449084}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 0.1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &2401963476608112476
 GameObject:
   m_ObjectHideFlags: 0
@@ -780,6 +816,7 @@ GameObject:
   - component: {fileID: 408165102308300458}
   - component: {fileID: 8537603545434233364}
   - component: {fileID: 7744493521848812880}
+  - component: {fileID: 4404290278128436093}
   m_Layer: 0
   m_Name: Piece4
   m_TagString: Untagged
@@ -795,7 +832,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2401963476608112476}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.2, y: 0, z: 0.2}
+  m_LocalPosition: {x: -0.2, y: -0, z: 0.2}
   m_LocalScale: {x: 0.015, y: 1, z: 0.015}
   m_Children: []
   m_Father: {fileID: 4762377382658394795}
@@ -850,6 +887,24 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &4404290278128436093
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2401963476608112476}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b503bc139daf43e9b6260b70971c623, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  puzzleSize: 3
+  speed: 0.4
+  unconnected: {fileID: 0}
+  connected: {fileID: 0}
+  moving: 0
+  position: {x: 0, y: 2}
 --- !u!1 &3854350433668506427
 GameObject:
   m_ObjectHideFlags: 0
@@ -1061,11 +1116,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   puzzleSize: 3
-  speed: 0.1
+  speed: 0.4
   unconnected: {fileID: 2100000, guid: d2a030d97f43e41e6aa0e1c740b6cc7e, type: 2}
   connected: {fileID: 2100000, guid: 7c1854062672141f2ba0ef7f3be6912c, type: 2}
   moving: 0
-  position: {x: 0, y: 0}
+  position: {x: 1, y: 1}
 --- !u!1 &4554782844649955640
 GameObject:
   m_ObjectHideFlags: 0
@@ -1077,6 +1132,7 @@ GameObject:
   - component: {fileID: 7474698931891583949}
   - component: {fileID: 9219162978178878341}
   - component: {fileID: 1474685202587016944}
+  - component: {fileID: 4404290278128436094}
   m_Layer: 0
   m_Name: Piece3
   m_TagString: Untagged
@@ -1147,6 +1203,24 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &4404290278128436094
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4554782844649955640}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b503bc139daf43e9b6260b70971c623, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  puzzleSize: 3
+  speed: 0.4
+  unconnected: {fileID: 0}
+  connected: {fileID: 0}
+  moving: 0
+  position: {x: 1, y: 0}
 --- !u!1 &7054320367816922095
 GameObject:
   m_ObjectHideFlags: 0

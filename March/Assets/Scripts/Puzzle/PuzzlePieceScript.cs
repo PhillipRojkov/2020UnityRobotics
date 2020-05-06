@@ -8,6 +8,8 @@ public class PuzzlePieceScript : MonoBehaviour
 
     [SerializeField] private float speed = 0.1f;
 
+    public bool isNode = false;
+
     //Materials
     [SerializeField] private Material unconnected;
     [SerializeField] private Material connected;
@@ -15,6 +17,7 @@ public class PuzzlePieceScript : MonoBehaviour
     public bool moving = false;
 
     public Vector2 position;
+
 
     public IEnumerator MoveUp()
     {

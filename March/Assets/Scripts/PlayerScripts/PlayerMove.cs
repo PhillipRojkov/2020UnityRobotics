@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerMove : MonoBehaviour
 {
     [SerializeField] private Rigidbody rb;
-    [SerializeField] private float baseSpeed = 10;
+    [SerializeField] public float baseSpeed = 10;
     private float speed;
     [SerializeField] private float airSpeedMultiplier = 0.6f;
     [SerializeField] private float turnSensitivity = 10;
@@ -16,6 +16,8 @@ public class PlayerMove : MonoBehaviour
     public bool isGrounded = false;
     [SerializeField] private CapsuleCollider playerCollider;
     public bool canMove = true;
+
+    public bool inPuzzle = false;
 
     private float t;
 
@@ -85,7 +87,7 @@ public class PlayerMove : MonoBehaviour
         }
 
         //APPLY VELOCITY
-        if (canMove) //Allows for disablement of movement
+        if (canMove && !inPuzzle) //Allows for disablement of movement
         {
             rb.velocity = velocity; //Apply the new velocity
         } else if (t == 0)

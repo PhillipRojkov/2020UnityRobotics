@@ -43,6 +43,8 @@ public class PuzzleScript : MonoBehaviour
             PuzzlePieceScript puzzlePieceScript = child.GetComponent<PuzzlePieceScript>();
             nodes[(int)puzzlePieceScript.position.x, (int)puzzlePieceScript.position.y] = child.gameObject;
         }
+
+        CalcConnectivityFromNode();
     }
 
 
@@ -143,6 +145,7 @@ public class PuzzleScript : MonoBehaviour
                 }
             }
             ReArray();
+            CalcConnectivityFromNode();
         } //End of Move Up
 
 
@@ -213,6 +216,7 @@ public class PuzzleScript : MonoBehaviour
                 }
             }
             ReArray();
+            CalcConnectivityFromNode();
         } //End of Move Down
 
 
@@ -283,7 +287,8 @@ public class PuzzleScript : MonoBehaviour
                 }
             }
             ReArray();
-        } //End of Move Down
+            CalcConnectivityFromNode();
+        } //End of Move Left
 
 
         if (Input.GetKeyDown("d") && !moving) //Move Right
@@ -353,7 +358,8 @@ public class PuzzleScript : MonoBehaviour
                 }
             }
             ReArray();
-        } //End of Move Down
+            CalcConnectivityFromNode();
+        } //End of Move Right
 
         //Quit puzzle
         if (Input.GetKeyDown("q"))
@@ -393,9 +399,21 @@ public class PuzzleScript : MonoBehaviour
     }
 
 
-    void CalcConnectivity() //Determine if pieces are connected to nodes and ultimately win condition
+    void CalcConnectivityFromNode() //Determine if pieces are connected to nodes and ultimately win condition
     {
+        //Set all pieces to unnconnected before determining connectivity (this does not produce visual artifacts because this is overridden on the same frame)
         for (int i = 0; i < puzzleSize; i++)
+        {
+            for (int j = 0; j < puzzleSize; j++)
+            {
+                if (pieces[i,j] != null)
+                {
+                    pieces[i, j].GetComponent<Renderer>().material = pieces[i, j].GetComponent<PuzzlePieceScript>().unconnected;
+                }
+            }
+        }
+
+        for (int i = 0; i < puzzleSize; i++) //Calc from node
         {
             for (int j = 0; j < puzzleSize; j++)
             {
@@ -403,14 +421,17 @@ public class PuzzleScript : MonoBehaviour
                 {
                     if (pieces[i,j] != null) //A piece is connected to a node
                     {
+                        pieces[i, j].GetComponent<Renderer>().material = pieces[i, j].GetComponent<PuzzlePieceScript>().connected;
+
                         //Check up
                         if (j + 1 < puzzleSize) //Makes sure that we are not out of the bounds of the array
                         {
                             if (pieces[i, j + 1] != null) //if there is a piece k units above
                             {
                                 //pieces[i, j + 1] is connected
+                                pieces[i, j + 1].GetComponent<Renderer>().material = pieces[i, j + 1].GetComponent<PuzzlePieceScript>().connected;
 
-                                //Check if this piece is on a node for win condition
+                                CalcConnectivityPiece(i, j, i, j+1);
                             }
                         }
                         //Check down
@@ -419,8 +440,9 @@ public class PuzzleScript : MonoBehaviour
                             if (pieces[i, j - 1] != null) //if there is a piece k units below
                             {
                                 //pieces[i, j - 1] is connected
+                                pieces[i, j - 1].GetComponent<Renderer>().material = pieces[i, j - 1].GetComponent<PuzzlePieceScript>().connected;
 
-                                //Check if this piece is on a node for win condition
+                                CalcConnectivityPiece(i, j, i, j - 1);
                             }
                         }
 
@@ -429,9 +451,10 @@ public class PuzzleScript : MonoBehaviour
                         {
                             if (pieces[i - 1, j] != null) //if there is a piece k units left
                             {
-                                //pieces[i + 1, j] is connected
+                                //pieces[i - 1, j] is connected
+                                pieces[i - 1, j].GetComponent<Renderer>().material = pieces[i - 1, j].GetComponent<PuzzlePieceScript>().connected;
 
-                                //Check if this piece is on a node for win condition
+                                CalcConnectivityPiece(i, j, i - 1, j);
                             }
                         }
 
@@ -441,12 +464,64 @@ public class PuzzleScript : MonoBehaviour
                             if (pieces[i + 1, j] != null) //if there is a piece k units left
                             {
                                 //pieces[i + 1, j] is connected
+                                pieces[i + 1, j].GetComponent<Renderer>().material = pieces[i + 1, j].GetComponent<PuzzlePieceScript>().connected;
 
-                                //Check if this piece is on a node for win condition
+                                CalcConnectivityPiece(i + 1, j, i, j);
                             }
                         }
                     }
                 }
+            }
+        }
+    }
+
+
+    void CalcConnectivityPiece(int pI, int pJ, int i, int j) //pI is previous i, pJ is previous j, i and j are coordinates of this piece
+    {
+        //Check up
+        if (j + 1 < puzzleSize && pJ != j+1) //Makes sure that we are not out of the bounds of the array and that its not checking the previous piece
+        {
+            if (pieces[i, j + 1] != null) //if there is a piece k units above
+            {
+                //pieces[i, j + 1] is connected
+                pieces[i, j + 1].GetComponent<Renderer>().material = pieces[i, j + 1].GetComponent<PuzzlePieceScript>().connected;
+
+                CalcConnectivityPiece(i, j, i, j + 1);
+            }
+        }
+        //Check down
+        if (j - 1 >= 0 && pJ != j-1) //Makes sure that we are not out of the bounds of the array and that its not checking the previous piece
+        {
+            if (pieces[i, j - 1] != null) //if there is a piece k units below
+            {
+                //pieces[i, j - 1] is connected
+                pieces[i, j - 1].GetComponent<Renderer>().material = pieces[i, j - 1].GetComponent<PuzzlePieceScript>().connected;
+
+                CalcConnectivityPiece(i, j, i, j - 1);
+            }
+        }
+
+        //Check left
+        if (i - 1 >= 0 && pI!= i-1) //Makes sure that we are not out of the bounds of the array and that its not checking the previous piece
+        {
+            if (pieces[i - 1, j] != null) //if there is a piece k units left
+            {
+                //pieces[i + 1, j] is connected
+                pieces[i - 1, j].GetComponent<Renderer>().material = pieces[i - 1, j].GetComponent<PuzzlePieceScript>().connected;
+
+                CalcConnectivityPiece(i, j, i - 1, j);
+            }
+        }
+
+        //Check right
+        if (i + 1 < puzzleSize && pI != i+1) //Makes sure that we are not out of the bounds of the array and that its not checking the previous piece
+        {
+            if (pieces[i + 1, j] != null) //if there is a piece k units left
+            {
+                //pieces[i + 1, j] is connected
+                pieces[i + 1, j].GetComponent<Renderer>().material = pieces[i + 1, j].GetComponent<PuzzlePieceScript>().connected;
+
+                CalcConnectivityPiece(i, j, i + 1, j);
             }
         }
     }

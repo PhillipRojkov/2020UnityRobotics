@@ -96,8 +96,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   puzzleSize: 3
   speed: 0.4
-  unconnected: {fileID: 0}
-  connected: {fileID: 0}
+  isNode: 0
+  unconnected: {fileID: 2100000, guid: d2a030d97f43e41e6aa0e1c740b6cc7e, type: 2}
+  connected: {fileID: 2100000, guid: 7c1854062672141f2ba0ef7f3be6912c, type: 2}
   moving: 0
   position: {x: 1, y: 2}
 --- !u!1 &315118958697355354
@@ -791,7 +792,9 @@ MonoBehaviour:
   player: {fileID: 0}
   puzzleSize: 3
   numberOfPieces: 4
+  numberOfNodes: 2
   piecesParent: {fileID: 7054320367816922095}
+  nodesParent: {fileID: 0}
 --- !u!65 &1727003297194692805
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -901,8 +904,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   puzzleSize: 3
   speed: 0.4
-  unconnected: {fileID: 0}
-  connected: {fileID: 0}
+  isNode: 0
+  unconnected: {fileID: 2100000, guid: d2a030d97f43e41e6aa0e1c740b6cc7e, type: 2}
+  connected: {fileID: 2100000, guid: 7c1854062672141f2ba0ef7f3be6912c, type: 2}
   moving: 0
   position: {x: 0, y: 2}
 --- !u!1 &3854350433668506427
@@ -1117,6 +1121,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   puzzleSize: 3
   speed: 0.4
+  isNode: 0
   unconnected: {fileID: 2100000, guid: d2a030d97f43e41e6aa0e1c740b6cc7e, type: 2}
   connected: {fileID: 2100000, guid: 7c1854062672141f2ba0ef7f3be6912c, type: 2}
   moving: 0
@@ -1217,8 +1222,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   puzzleSize: 3
   speed: 0.4
-  unconnected: {fileID: 0}
-  connected: {fileID: 0}
+  isNode: 0
+  unconnected: {fileID: 2100000, guid: d2a030d97f43e41e6aa0e1c740b6cc7e, type: 2}
+  connected: {fileID: 2100000, guid: 7c1854062672141f2ba0ef7f3be6912c, type: 2}
   moving: 0
   position: {x: 1, y: 0}
 --- !u!1 &7054320367816922095

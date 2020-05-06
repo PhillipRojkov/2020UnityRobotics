@@ -11,8 +11,8 @@ public class PuzzlePieceScript : MonoBehaviour
     public bool isNode = false;
 
     //Materials
-    [SerializeField] private Material unconnected;
-    [SerializeField] private Material connected;
+    public Material unconnected;
+    public Material connected;
 
     public bool moving = false;
 

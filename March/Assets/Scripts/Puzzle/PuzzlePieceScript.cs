@@ -10,6 +10,8 @@ public class PuzzlePieceScript : MonoBehaviour
 
     public bool isNode = false;
 
+    public bool isBlocker = false;
+
     //Materials
     public Material unconnected;
     public Material connected;
@@ -27,7 +29,7 @@ public class PuzzlePieceScript : MonoBehaviour
 
         Vector3 startPos = transform.position;
 
-        Vector3 endPos = new Vector3(transform.position.x, transform.position.y + distance, transform.position.z);
+        Vector3 endPos = transform.position + transform.forward * distance;
 
         moving = true;
 
@@ -49,7 +51,7 @@ public class PuzzlePieceScript : MonoBehaviour
 
         Vector3 startPos = transform.position;
 
-        Vector3 endPos = new Vector3(transform.position.x, transform.position.y - distance, transform.position.z);
+        Vector3 endPos = transform.position + transform.forward * -distance;
 
         moving = true;
 
@@ -71,7 +73,7 @@ public class PuzzlePieceScript : MonoBehaviour
 
         Vector3 startPos = transform.position;
 
-        Vector3 endPos = new Vector3(transform.position.x - distance, transform.position.y, transform.position.z);
+        Vector3 endPos = transform.position + transform.right * -distance;
 
         moving = true;
 
@@ -93,7 +95,7 @@ public class PuzzlePieceScript : MonoBehaviour
 
         Vector3 startPos = transform.position;
 
-        Vector3 endPos = new Vector3(transform.position.x + distance, transform.position.y, transform.position.z);
+        Vector3 endPos = transform.position + transform.right * distance;
 
         moving = true;
 

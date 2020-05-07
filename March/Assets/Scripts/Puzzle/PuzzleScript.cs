@@ -12,16 +12,31 @@ public class PuzzleScript : MonoBehaviour
 
     [SerializeField] private int numberOfNodes = 2;
 
+    [SerializeField] private int numberOfBlockers = 1;
+
+    private GameObject[,] blockers;
+
     private GameObject[,] pieces;
 
     [SerializeField] private GameObject piecesParent;
 
     [SerializeField] private GameObject nodesParent;
 
+    [SerializeField] private GameObject blockersParent;
+
     private GameObject[,] nodes;
 
     bool moving = false; //Returns true if pieces are currentl moving. Used to only allow further inputs until after all pieces are done repositioning
 
+    private int n = 0; //Used in logic to stop infinte loops
+    private int n2 = 0;
+
+    public bool opensDoor = true;
+
+    public DoorScript doorScript;
+
+    private int ni;
+    private int nj;
 
     // Start is called before the first frame update   
     void Start()
@@ -42,6 +57,15 @@ public class PuzzleScript : MonoBehaviour
             Transform child = nodesParent.transform.GetChild(i);
             PuzzlePieceScript puzzlePieceScript = child.GetComponent<PuzzlePieceScript>();
             nodes[(int)puzzlePieceScript.position.x, (int)puzzlePieceScript.position.y] = child.gameObject;
+        }
+
+        blockers = new GameObject[puzzleSize, puzzleSize]; //Intialize blockers array
+
+        for (int i = 0; i < numberOfBlockers; i++)
+        {
+            Transform child = blockersParent.transform.GetChild(i);
+            PuzzlePieceScript puzzlePieceScript = child.GetComponent<PuzzlePieceScript>();
+            blockers[(int)puzzlePieceScript.position.x, (int)puzzlePieceScript.position.y] = child.gameObject;
         }
 
         CalcConnectivityFromNode();
@@ -128,6 +152,13 @@ public class PuzzleScript : MonoBehaviour
                                 checkAbove = false;
                                 piecesAboveBlock = false;
                             }
+
+                            if (blockers[i, j + k] != null) //BlockerCheck
+                            {
+                                piecesAboveBlock = true;
+                                checkAbove = false;
+                            }
+          
                         }
 
                         //The big if statement that moves the piece if it and all the pieces immediately above it are not blocked by the boundary of the puzzle
@@ -144,8 +175,11 @@ public class PuzzleScript : MonoBehaviour
                     }
                 }
             }
+            n = 0;
+            n2 = 0;
             ReArray();
             CalcConnectivityFromNode();
+            calcWin();
         } //End of Move Up
 
 
@@ -199,6 +233,12 @@ public class PuzzleScript : MonoBehaviour
                                 checkBelow = false;
                                 piecesBelowBlock = false;
                             }
+
+                            if (blockers[i, j - k] != null) //BlockerCheck
+                            {
+                                piecesBelowBlock = true;
+                                checkBelow = false;
+                            }
                         }
 
                         //The big if statement that moves the piece if it and all the pieces immediately below it are not blocked by the boundary of the puzzle
@@ -215,8 +255,11 @@ public class PuzzleScript : MonoBehaviour
                     }
                 }
             }
+            n = 0;
+            n2 = 0;
             ReArray();
             CalcConnectivityFromNode();
+            calcWin();
         } //End of Move Down
 
 
@@ -270,6 +313,12 @@ public class PuzzleScript : MonoBehaviour
                                 checkLeft = false;
                                 piecesLeftBlock = false;
                             }
+
+                            if (blockers[i - k, j] != null) //BlockerCheck
+                            {
+                                piecesLeftBlock = true;
+                                checkLeft = false;
+                            }
                         }
 
                         //The big if statement that moves the piece if it and all the pieces immediately left of it are not blocked by the boundary of the puzzle
@@ -286,8 +335,11 @@ public class PuzzleScript : MonoBehaviour
                     }
                 }
             }
+            n = 0;
+            n2 = 0;
             ReArray();
             CalcConnectivityFromNode();
+            calcWin();
         } //End of Move Left
 
 
@@ -341,6 +393,13 @@ public class PuzzleScript : MonoBehaviour
                                 checkRight = false;
                                 piecesRightBlock = false;
                             }
+
+
+                            if (blockers[i + k, j] != null) //BlockerCheck
+                            {
+                                piecesRightBlock = true;
+                                checkRight = false;
+                            }
                         }
 
                         //The big if statement that moves the piece if it and all the pieces immediately right of it are not blocked by the boundary of the puzzle
@@ -357,8 +416,11 @@ public class PuzzleScript : MonoBehaviour
                     }
                 }
             }
+            n = 0;
+            n2 = 0;
             ReArray();
             CalcConnectivityFromNode();
+            calcWin();
         } //End of Move Right
 
         //Quit puzzle
@@ -399,7 +461,7 @@ public class PuzzleScript : MonoBehaviour
     }
 
 
-    void CalcConnectivityFromNode() //Determine if pieces are connected to nodes and ultimately win condition
+    void CalcConnectivityFromNode() //Determine if pieces are connected to nodes USED ONLY FOR VISUALS
     {
         //Set all pieces to unnconnected before determining connectivity (this does not produce visual artifacts because this is overridden on the same frame)
         for (int i = 0; i < puzzleSize; i++)
@@ -417,9 +479,9 @@ public class PuzzleScript : MonoBehaviour
         {
             for (int j = 0; j < puzzleSize; j++)
             {
-                if (nodes[i,j] != null)
+                if (nodes[i,j] != null) //There is a node at i,j
                 {
-                    if (pieces[i,j] != null) //A piece is connected to a node
+                    if (pieces[i,j] != null) //A piece is connected to this node
                     {
                         pieces[i, j].GetComponent<Renderer>().material = pieces[i, j].GetComponent<PuzzlePieceScript>().connected;
 
@@ -466,7 +528,7 @@ public class PuzzleScript : MonoBehaviour
                                 //pieces[i + 1, j] is connected
                                 pieces[i + 1, j].GetComponent<Renderer>().material = pieces[i + 1, j].GetComponent<PuzzlePieceScript>().connected;
 
-                                CalcConnectivityPiece(i + 1, j, i, j);
+                                CalcConnectivityPiece(i, j, i + 1, j);
                             }
                         }
                     }
@@ -476,53 +538,192 @@ public class PuzzleScript : MonoBehaviour
     }
 
 
-    void CalcConnectivityPiece(int pI, int pJ, int i, int j) //pI is previous i, pJ is previous j, i and j are coordinates of this piece
+    void CalcConnectivityPiece(int pI, int pJ, int i, int j) //pI is previous i, pJ is previous j, i and j are coordinates of this piece USED ONLY FOR VISUALS
     {
-        //Check up
-        if (j + 1 < puzzleSize && pJ != j+1) //Makes sure that we are not out of the bounds of the array and that its not checking the previous piece
+        if (n < numberOfPieces) //Makes sure that infinte loops don't occur
         {
-            if (pieces[i, j + 1] != null) //if there is a piece k units above
-            {
-                //pieces[i, j + 1] is connected
-                pieces[i, j + 1].GetComponent<Renderer>().material = pieces[i, j + 1].GetComponent<PuzzlePieceScript>().connected;
+            n++;
 
-                CalcConnectivityPiece(i, j, i, j + 1);
+            //Check up
+            if (j + 1 < puzzleSize && pJ != j + 1) //Makes sure that we are not out of the bounds of the array and that its not checking the previous piece
+            {
+                if (pieces[i, j + 1] != null) //if there is a piece k units above
+                {
+                    //pieces[i, j + 1] is connected
+                    pieces[i, j + 1].GetComponent<Renderer>().material = pieces[i, j + 1].GetComponent<PuzzlePieceScript>().connected;
+
+                    CalcConnectivityPiece(i, j, i, j + 1);
+                }
+            }
+            //Check down
+            if (j - 1 >= 0 && pJ != j - 1) //Makes sure that we are not out of the bounds of the array and that its not checking the previous piece
+            {
+                if (pieces[i, j - 1] != null) //if there is a piece k units below
+                {
+                    //pieces[i, j - 1] is connected
+                    pieces[i, j - 1].GetComponent<Renderer>().material = pieces[i, j - 1].GetComponent<PuzzlePieceScript>().connected;
+
+                    CalcConnectivityPiece(i, j, i, j - 1);
+                }
+            }
+
+            //Check left
+            if (i - 1 >= 0 && pI != i - 1) //Makes sure that we are not out of the bounds of the array and that its not checking the previous piece
+            {
+                if (pieces[i - 1, j] != null) //if there is a piece k units left
+                {
+                    //pieces[i + 1, j] is connected
+                    pieces[i - 1, j].GetComponent<Renderer>().material = pieces[i - 1, j].GetComponent<PuzzlePieceScript>().connected;
+
+                    CalcConnectivityPiece(i, j, i - 1, j);
+                }
+            }
+
+            //Check right
+            if (i + 1 < puzzleSize && pI != i + 1) //Makes sure that we are not out of the bounds of the array and that its not checking the previous piece
+            {
+                if (pieces[i + 1, j] != null) //if there is a piece k units left
+                {
+                    //pieces[i + 1, j] is connected
+                    pieces[i + 1, j].GetComponent<Renderer>().material = pieces[i + 1, j].GetComponent<PuzzlePieceScript>().connected;
+
+                    CalcConnectivityPiece(i, j, i + 1, j);
+                }
             }
         }
-        //Check down
-        if (j - 1 >= 0 && pJ != j-1) //Makes sure that we are not out of the bounds of the array and that its not checking the previous piece
-        {
-            if (pieces[i, j - 1] != null) //if there is a piece k units below
-            {
-                //pieces[i, j - 1] is connected
-                pieces[i, j - 1].GetComponent<Renderer>().material = pieces[i, j - 1].GetComponent<PuzzlePieceScript>().connected;
+    }
 
-                CalcConnectivityPiece(i, j, i, j - 1);
+
+    void calcWin() //Like calcConnectivityFromNode exept this sets ni and nj to the position of the first node, and starts the checking cycle from the piece at the next node CALCULATES ACTUAL WIN CONDITION
+    {
+        bool firstNode = true;
+
+        ni = -1;
+        nj = -1;
+
+        for (int i = 0; i < puzzleSize; i++)
+        {
+            for (int j = 0; j < puzzleSize; j++)
+            {
+                if (nodes[i,j] != null)
+                {
+                    if (pieces[i,j] != null)
+                    {
+                        if (firstNode)
+                        {
+                            ni = i; //Store position of first node
+                            nj = j;
+                            firstNode = false;
+                            //Debug.Log(ni + "ni nj" + nj);
+                        }
+                        else if (firstNode == false) //Starts doing the checking, originating at the second node
+                        {
+                            //Debug.Log(i + "i j" + j);
+                            //Check up
+                            if (j + 1 < puzzleSize) //Makes sure that we are not out of the bounds of the array
+                            {
+                                if (pieces[i, j + 1] != null) //if there is a piece k units above
+                                {
+                                    //pieces[i, j + 1] is connected
+                                    winCalcPiece(i, j, i, j + 1);
+                                }
+                            }
+                            //Check down
+                            if (j - 1 >= 0) //Makes sure that we are not out of the bounds of the array
+                            {
+                                if (pieces[i, j - 1] != null) //if there is a piece k units below
+                                {
+                                    //pieces[i, j - 1] is connected
+                                    winCalcPiece(i, j, i, j - 1);
+                                }
+                            }
+
+                            //Check left
+                            if (i - 1 >= 0) //Makes sure that we are not out of the bounds of the array
+                            {
+                                if (pieces[i - 1, j] != null) //if there is a piece k units left
+                                {
+                                    //pieces[i - 1, j] is connected
+                                    winCalcPiece(i, j, i - 1, j);
+                                }
+                            }
+
+                            //Check right
+                            if (i + 1 < puzzleSize) //Makes sure that we are not out of the bounds of the array
+                            {
+                                if (pieces[i + 1, j] != null) //if there is a piece k units left
+                                {
+                                    //pieces[i + 1, j] is connected
+                                    winCalcPiece(i, j, i + 1, j);
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
+    }
 
-        //Check left
-        if (i - 1 >= 0 && pI!= i-1) //Makes sure that we are not out of the bounds of the array and that its not checking the previous piece
+
+    void winCalcPiece(int pI, int pJ, int i, int j) //Like calcConnectivityPiece ecxept like calcWin it starts at one position and doesn't affect the visuals CALCULATES ACTUAL WIN CONDITION
+    {
+        if (i == ni && j == nj) //This piece is on the first win node
         {
-            if (pieces[i - 1, j] != null) //if there is a piece k units left
-            {
-                //pieces[i + 1, j] is connected
-                pieces[i - 1, j].GetComponent<Renderer>().material = pieces[i - 1, j].GetComponent<PuzzlePieceScript>().connected;
-
-                CalcConnectivityPiece(i, j, i - 1, j);
-            }
+                Win();
         }
 
-        //Check right
-        if (i + 1 < puzzleSize && pI != i+1) //Makes sure that we are not out of the bounds of the array and that its not checking the previous piece
+        if (n2 < numberOfPieces) //Makes sure that infinte loops don't occur
         {
-            if (pieces[i + 1, j] != null) //if there is a piece k units left
-            {
-                //pieces[i + 1, j] is connected
-                pieces[i + 1, j].GetComponent<Renderer>().material = pieces[i + 1, j].GetComponent<PuzzlePieceScript>().connected;
+            n2++;
 
-                CalcConnectivityPiece(i, j, i + 1, j);
+            //Check up
+            if (j + 1 < puzzleSize && pJ != j + 1) //Makes sure that we are not out of the bounds of the array and that its not checking the previous piece
+            {
+                if (pieces[i, j + 1] != null) //if there is a piece k units above
+                {
+                    //pieces[i, j + 1] is connected
+                    winCalcPiece(i, j, i, j + 1);
+                }
+            }
+            //Check down
+            if (j - 1 >= 0 && pJ != j - 1) //Makes sure that we are not out of the bounds of the array and that its not checking the previous piece
+            {
+                if (pieces[i, j - 1] != null) //if there is a piece k units below
+                {
+                    //pieces[i, j - 1] is connected
+                    winCalcPiece(i, j, i, j - 1);
+                }
+            }
+
+            //Check left
+            if (i - 1 >= 0 && pI != i - 1) //Makes sure that we are not out of the bounds of the array and that its not checking the previous piece
+            {
+                if (pieces[i - 1, j] != null) //if there is a piece k units left
+                {
+                    //pieces[i - 1, j] is connected
+                    winCalcPiece(i, j, i - 1, j);
+                }
+            }
+
+            //Check right
+            if (i + 1 < puzzleSize && pI != i + 1) //Makes sure that we are not out of the bounds of the array and that its not checking the previous piece
+            {
+                if (pieces[i + 1, j] != null) //if there is a piece k units left
+                {
+                    //pieces[i + 1, j] is connected
+                    winCalcPiece(i, j, i + 1, j);
+                }
             }
         }
+    }
+
+    void Win()
+    {
+        if (opensDoor)
+        {
+            doorScript.triggerTouched = true;
+        }
+        
+        QuitPuzzle();
     }
 }

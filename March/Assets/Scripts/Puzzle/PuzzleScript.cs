@@ -6,6 +6,8 @@ public class PuzzleScript : MonoBehaviour
 {
     [SerializeField] private GameObject player;
 
+    [SerializeField] private GameObject instructions;
+
     [SerializeField] private int puzzleSize = 3;
 
     [SerializeField] private int numberOfPieces = 4;
@@ -17,6 +19,10 @@ public class PuzzleScript : MonoBehaviour
     private GameObject[,] blockers;
 
     private GameObject[,] pieces;
+
+    private Vector2[] startingPiecePos;
+
+    private Vector3[] startingPieceVector3;
 
     [SerializeField] private GameObject piecesParent;
 
@@ -50,6 +56,18 @@ public class PuzzleScript : MonoBehaviour
             pieces[(int)puzzlePieceScript.position.x, (int)puzzlePieceScript.position.y] = child.gameObject;
         }
 
+        startingPiecePos = new Vector2[numberOfPieces]; //Initialize storing starting positions of pieces
+        startingPieceVector3 = new Vector3[numberOfPieces]; //Initialize storing the starting world position of pieces
+
+        for (int i = 0; i < numberOfPieces; i++)
+        {
+            Transform child = piecesParent.transform.GetChild(i);
+            PuzzlePieceScript puzzlePieceScript = child.GetComponent<PuzzlePieceScript>();
+            startingPiecePos[i] = puzzlePieceScript.position; //Store the starting position of all the pieces
+
+            startingPieceVector3[i] = child.transform.position;
+        }
+
         nodes = new GameObject[puzzleSize, puzzleSize]; //Intialize nodes array
 
         for (int i = 0; i < numberOfNodes; i++)
@@ -69,6 +87,10 @@ public class PuzzleScript : MonoBehaviour
         }
 
         CalcConnectivityFromNode();
+
+        instructions.SetActive(false);
+        
+        this.enabled = false;
     }
 
 
@@ -428,6 +450,18 @@ public class PuzzleScript : MonoBehaviour
         {
             QuitPuzzle();
         }
+
+        //Restart puzzle
+        if (Input.GetKeyDown("r"))
+        {
+            Restart();
+        }
+    }
+
+
+    public void TurnOnInstructions()
+    {
+        instructions.SetActive(true);
     }
 
 
@@ -436,6 +470,8 @@ public class PuzzleScript : MonoBehaviour
         PlayerMove playerMove = player.GetComponent<PlayerMove>();
 
         playerMove.inPuzzle = false;
+
+        instructions.SetActive(false);
 
         this.enabled = false;
     }
@@ -716,6 +752,30 @@ public class PuzzleScript : MonoBehaviour
             }
         }
     }
+
+
+    void Restart()
+    {
+        for (int i = 0; i < puzzleSize; i++)
+        {
+            for (int j = 0; j < puzzleSize; j++)
+            {
+                pieces[i, j] = null; //Clear the array
+            }
+        }
+
+        for (int i = 0; i < numberOfPieces; i++)
+        {
+            Transform child = piecesParent.transform.GetChild(i);
+            PuzzlePieceScript puzzlePieceScript = child.GetComponent<PuzzlePieceScript>();
+            puzzlePieceScript.position = startingPiecePos[i]; //Reset internal position (per object)
+
+            pieces[(int)puzzlePieceScript.position.x, (int)puzzlePieceScript.position.y] = child.gameObject; //Reset the position in the pieces[,] array
+
+            child.transform.position = startingPieceVector3[i]; //Reset visual position
+        }
+    }
+
 
     void Win()
     {

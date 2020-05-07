@@ -68,11 +68,13 @@ public class PlayerWeapon : MonoBehaviour
             RaycastHit use;
             if (Physics.Raycast(camera.transform.position, camera.transform.forward, out use, useDistance))
             {
-                if (use.transform.gameObject.CompareTag("Puzzle"))
+                if (use.transform.gameObject.CompareTag("Puzzle")) //Is puzzle
                 {
                     PuzzleScript puzzleScript = use.transform.gameObject.GetComponent<PuzzleScript>();
 
                     puzzleScript.enabled = true; //Turn on puzzle
+
+                    puzzleScript.TurnOnInstructions(); //Turns on the instruction graphic thingy
 
                     PlayerMove playerMove = this.gameObject.GetComponent<PlayerMove>();
                     playerMove.inPuzzle = true; //Disable movement

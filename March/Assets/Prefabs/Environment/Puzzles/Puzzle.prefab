@@ -228,7 +228,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   puzzleSize: 3
-  speed: 0.4
+  speed: 0.6
   isNode: 0
   isBlocker: 0
   unconnected: {fileID: 2100000, guid: d2a030d97f43e41e6aa0e1c740b6cc7e, type: 2}
@@ -919,12 +919,13 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1759488722528449084}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bab01edb81c634299b386458148aa303, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 0}
+  instructions: {fileID: 4457369716831760274}
   puzzleSize: 3
   numberOfPieces: 4
   numberOfNodes: 2
@@ -1042,7 +1043,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   puzzleSize: 3
-  speed: 0.4
+  speed: 0.6
   isNode: 0
   isBlocker: 0
   unconnected: {fileID: 2100000, guid: d2a030d97f43e41e6aa0e1c740b6cc7e, type: 2}
@@ -1260,7 +1261,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   puzzleSize: 3
-  speed: 0.4
+  speed: 0.6
   isNode: 0
   isBlocker: 0
   unconnected: {fileID: 2100000, guid: d2a030d97f43e41e6aa0e1c740b6cc7e, type: 2}
@@ -1362,7 +1363,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   puzzleSize: 3
-  speed: 0.4
+  speed: 0.6
   isNode: 0
   isBlocker: 0
   unconnected: {fileID: 2100000, guid: d2a030d97f43e41e6aa0e1c740b6cc7e, type: 2}

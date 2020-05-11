@@ -44,6 +44,8 @@ public class PuzzleScript : MonoBehaviour
     private int ni;
     private int nj;
 
+    private bool lockPuzzle = false; //Lock the puzzle for a small delay after win
+
     // Start is called before the first frame update   
     void Start()
     {
@@ -124,7 +126,7 @@ public class PuzzleScript : MonoBehaviour
             }
         }
 
-        if (Input.GetKeyDown("w") && !moving) //Move Up
+        if (Input.GetKeyDown("w") && !moving && !lockPuzzle) //Move Up
         {
             for (int i = 0; i < puzzleSize; i++)
             {
@@ -205,7 +207,7 @@ public class PuzzleScript : MonoBehaviour
         } //End of Move Up
 
 
-        if (Input.GetKeyDown("s") && !moving) //Move Down
+        if (Input.GetKeyDown("s") && !moving && !lockPuzzle) //Move Down
         {
             for (int i = 0; i < puzzleSize; i++)
             {
@@ -285,7 +287,7 @@ public class PuzzleScript : MonoBehaviour
         } //End of Move Down
 
 
-        if (Input.GetKeyDown("a") && !moving) //Move Left
+        if (Input.GetKeyDown("a") && !moving && !lockPuzzle) //Move Left
         {
             for (int i = 0; i < puzzleSize; i++)
             {
@@ -365,7 +367,7 @@ public class PuzzleScript : MonoBehaviour
         } //End of Move Left
 
 
-        if (Input.GetKeyDown("d") && !moving) //Move Right
+        if (Input.GetKeyDown("d") && !moving && !lockPuzzle) //Move Right
         {
             for (int i = 0; i < puzzleSize; i++)
             {
@@ -446,13 +448,13 @@ public class PuzzleScript : MonoBehaviour
         } //End of Move Right
 
         //Quit puzzle
-        if (Input.GetKeyDown("q"))
+        if (Input.GetKeyDown("q") && !lockPuzzle)
         {
             QuitPuzzle();
         }
 
         //Restart puzzle
-        if (Input.GetKeyDown("r"))
+        if (Input.GetKeyDown("r") && !lockPuzzle)
         {
             Restart();
         }
@@ -705,7 +707,9 @@ public class PuzzleScript : MonoBehaviour
     {
         if (i == ni && j == nj) //This piece is on the first win node
         {
-                Win();
+            IEnumerator winCo = WinCo();
+
+            StartCoroutine(winCo);
         }
 
         if (n2 < numberOfPieces) //Makes sure that infinte loops don't occur
@@ -777,13 +781,19 @@ public class PuzzleScript : MonoBehaviour
     }
 
 
-    void Win()
+    IEnumerator WinCo()
     {
+        lockPuzzle = true;
+
+        yield return new WaitForSeconds(.5f);
+
         if (opensDoor)
         {
             doorScript.triggerTouched = true;
         }
-        
+
+        lockPuzzle = false;
+
         QuitPuzzle();
     }
 }

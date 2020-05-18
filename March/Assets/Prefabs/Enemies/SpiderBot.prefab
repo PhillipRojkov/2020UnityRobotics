@@ -2557,7 +2557,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8240818155986285254}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5.994, y: 0.8, z: 16.838}
+  m_LocalPosition: {x: 0, y: 0.8, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 8334315556703389839}
@@ -2608,9 +2608,11 @@ MonoBehaviour:
   movingTarget2: {fileID: 7180965343775189692}
   movingTarget3: {fileID: 2379052147371921705}
   movingTarget4: {fileID: 4182082481860912363}
-  maxDistance: 1
+  maxDistance: 0.7
   groundLayer: 9
   legMoveSpeed: 10
+  slowGate: 0
+  fastGate: 1
 --- !u!114 &895263906542496225
 MonoBehaviour:
   m_ObjectHideFlags: 0

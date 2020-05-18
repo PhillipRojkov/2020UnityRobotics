@@ -28,6 +28,9 @@ public class ProceduralAnimatorScript : MonoBehaviour
 
     private IEnumerator[] moveLegsCoroutines = new IEnumerator[4];
 
+    public bool slowGate = false;
+    public bool fastGate = true;
+
 
     // Start is called before the first frame update
     void Start()
@@ -68,31 +71,68 @@ public class ProceduralAnimatorScript : MonoBehaviour
             
             distance[i] = Vector3.Distance(targets[i].transform.position, movingTargets[i].transform.position); //Distance from the current target point (target) to the moving target point
 
-            if (distance[i] > maxDistance && !legisMoving[i]) //Moves the target to the moving target's position if the distance between them is too large and if the current leg is not moving
+            if (fastGate) //Move legs on diagonals
             {
-                if (i == 0 && !legisMoving[1] && !legisMoving[2]) //Leg 1 cannot move if legs 2 and 3 are moving
+                if (distance[i] > maxDistance && !legisMoving[i]) //Moves the target to the moving target's position if the distance between them is too large and if the current leg is not moving
                 {
-                    moveLegsCoroutines[i] = MoveLeg(i);
-                    StartCoroutine(moveLegsCoroutines[i]); //Move the leg
-                    legisMoving[i] = true; //The leg is moving
-                } else if (i == 1 && !legisMoving[0] && !legisMoving[3]) //Leg 2 cannot move if leg 1 is moving
-                {
-                    moveLegsCoroutines[i] = MoveLeg(i);
-                    StartCoroutine(moveLegsCoroutines[i]); //Move the leg
-                    legisMoving[i] = true; //The leg is moving
-                } else if (i == 2 && !legisMoving[3] && !legisMoving[0]) //Leg 3 cannot move if leg 4 is moving
-                {
-                    moveLegsCoroutines[i] = MoveLeg(i);
-                    StartCoroutine(moveLegsCoroutines[i]); //Move the leg
-                    legisMoving[i] = true; //The leg is moving
-                } else if (i == 3 && !legisMoving[2] && !legisMoving[1]) //Leg 4 cannot move if leg 3 is moving
-                {
-                    moveLegsCoroutines[i] = MoveLeg(i);
-                    StartCoroutine(moveLegsCoroutines[i]); //Move the leg
-                    legisMoving[i] = true; //The leg is moving
+                    if (i == 0 && !legisMoving[1] && !legisMoving[2]) //Leg 1 cannot move if legs 2 and 3 are moving
+                    {
+                        moveLegsCoroutines[i] = MoveLeg(i);
+                        StartCoroutine(moveLegsCoroutines[i]); //Move the leg
+                        legisMoving[i] = true; //The leg is moving
+                    }
+                    else if (i == 1 && !legisMoving[0] && !legisMoving[3]) //Leg 2 cannot move if leg 1 and 4 are moving
+                    {
+                        moveLegsCoroutines[i] = MoveLeg(i);
+                        StartCoroutine(moveLegsCoroutines[i]); //Move the leg
+                        legisMoving[i] = true; //The leg is moving
+                    }
+                    else if (i == 2 && !legisMoving[3] && !legisMoving[0]) //Leg 3 cannot move if leg 4 and 1 are moving
+                    {
+                        moveLegsCoroutines[i] = MoveLeg(i);
+                        StartCoroutine(moveLegsCoroutines[i]); //Move the leg
+                        legisMoving[i] = true; //The leg is moving
+                    }
+                    else if (i == 3 && !legisMoving[2] && !legisMoving[1]) //Leg 4 cannot move if leg 3 and 2 are moving
+                    {
+                        moveLegsCoroutines[i] = MoveLeg(i);
+                        StartCoroutine(moveLegsCoroutines[i]); //Move the leg
+                        legisMoving[i] = true; //The leg is moving
+                    }
                 }
             }
-            
+
+            if (slowGate) //Move legs one by one
+            {
+                if (distance[i] > maxDistance && !legisMoving[i]) //Moves the target to the moving target's position if the distance between them is too large and if the current leg is not moving
+                {
+                    if (i == 0 && !legisMoving[1] && !legisMoving[2] && !legisMoving[3]) //Leg 1 cannot move if legs 2, 3 and 4 are moving
+                    {
+                        moveLegsCoroutines[i] = MoveLeg(i);
+                        StartCoroutine(moveLegsCoroutines[i]); //Move the leg
+                        legisMoving[i] = true; //The leg is moving
+                    }
+                    else if (i == 1 && !legisMoving[0] && !legisMoving[3]) //Leg 2 cannot move if leg 1, 3 and 4 are moving
+                    {
+                        moveLegsCoroutines[i] = MoveLeg(i);
+                        StartCoroutine(moveLegsCoroutines[i]); //Move the leg
+                        legisMoving[i] = true; //The leg is moving
+                    }
+                    else if (i == 2 && !legisMoving[3] && !legisMoving[0] && !legisMoving[1]) //Leg 3 cannot move if leg 4, 1 and 2 are moving
+                    {
+                        moveLegsCoroutines[i] = MoveLeg(i);
+                        StartCoroutine(moveLegsCoroutines[i]); //Move the leg
+                        legisMoving[i] = true; //The leg is moving
+                    }
+                    else if (i == 3 && !legisMoving[2] && !legisMoving[1] && !legisMoving[0]) //Leg 4 cannot move if leg 3, 2 and 1 is moving
+                    {
+                        moveLegsCoroutines[i] = MoveLeg(i);
+                        StartCoroutine(moveLegsCoroutines[i]); //Move the leg
+                        legisMoving[i] = true; //The leg is moving
+                    }
+                }
+            }
+
             targets[i].transform.position = currentTargetPos[i]; //Place the target object onto the currentTargetPosition
         }
     }

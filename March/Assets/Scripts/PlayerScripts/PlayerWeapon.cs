@@ -22,9 +22,12 @@ public class PlayerWeapon : MonoBehaviour
 
     public bool hasShotgun = false;
 
+    public int shotgunAmmo = 8; //8 is max
+
     private int selectedWeapon = 0; //0 = pistol, 1 = shotgun
 
     [SerializeField] private float shotgunDamage = 130;
+    [SerializeField] private float shotgunDamageFalloff = .1f; //Percent damage taken off after 1 unit of distance
     [SerializeField] private float shotgunFireRate =  0.6f;
     [SerializeField] private float shotgunRangeMultiplier = .8f;
     [SerializeField] private GameObject shotgunMuzzleFlash;
@@ -32,6 +35,8 @@ public class PlayerWeapon : MonoBehaviour
 
     [SerializeField] private Material shotgunLoaded;
     [SerializeField] private Material shotgunBlank;
+
+    private Material lightsNormal;
 
     [SerializeField] private GameObject lightsParent;
     private GameObject[] lights;
@@ -45,6 +50,8 @@ public class PlayerWeapon : MonoBehaviour
         {
             lights[i] = lightsParent.transform.GetChild(i).gameObject; //Array lights is an array of the lights under lightsParent
         }
+
+        lightsNormal = lights[1].GetComponent<MeshRenderer>().material; //Store the normal pistol blue material for the lights
     }
 
 
@@ -53,14 +60,7 @@ public class PlayerWeapon : MonoBehaviour
     {
         if (Input.GetKeyDown("q") && hasShotgun)
         {
-            if (selectedWeapon == 0)
-            {
-                selectedWeapon = 1;
-            }
-            else if (selectedWeapon == 1)
-            {
-                selectedWeapon = 0;
-            }
+            SwapWeapon();
         }
 
         laserLineL.SetPosition(0, leftBarrel.position);
@@ -103,8 +103,11 @@ public class PlayerWeapon : MonoBehaviour
                 }
             }
 
-            else if (selectedWeapon == 1) //Shotgun
+            else if (selectedWeapon == 1 && shotgunAmmo > 0) //Shotgun
             {
+                shotgunAmmo--;
+                ShotgunAmmoCheck();
+
                 var flash = Instantiate(shotgunMuzzleFlash, leftBarrel.position, leftBarrel.rotation); //Create muzzle flash
                 flash.transform.parent = leftBarrel;
 
@@ -114,6 +117,26 @@ public class PlayerWeapon : MonoBehaviour
                 pistolAnimator.SetBool("Fire", true); //Set fire animation
 
                 nextFire = Time.time + shotgunFireRate; //Timer for fire rate
+
+                RaycastHit sgHit;
+                if (Physics.Raycast(camera.transform.position, camera.transform.forward, out sgHit, 100)) //Raycast shooting
+                {
+                    if (sgHit.transform.gameObject.CompareTag("Enemy")) //Check if hit enemy
+                    {
+                        float distance = Vector3.Distance(sgHit.transform.position, transform.position);
+
+                        if (sgHit.transform.gameObject.GetComponent<EnemyScript>()) //Check if standard enemy
+                        {
+                            enemyScript = sgHit.transform.gameObject.GetComponent<EnemyScript>(); //Apply damage to enemy
+                            enemyScript.health -= shotgunDamage - shotgunDamage * shotgunDamageFalloff * distance; //Linearly decrease damage taken as distance increases. for a shotgunDamageFalloff of .1, the damage taken after 1 unit of distance is 90%
+                        }
+                        else if (sgHit.transform.gameObject.GetComponent<SpiderBotScript>())
+                        {
+                            spiderBotScript = sgHit.transform.gameObject.GetComponent<SpiderBotScript>(); //Apply damage to enemy
+                            spiderBotScript.health -= shotgunDamage - shotgunDamage * shotgunDamageFalloff * distance; //Linearly decrease damage taken as distance increases. for a shotgunDamageFalloff of .1, the damage taken after 1 unit of distance is 90%
+                        }
+                    }
+                }
             }
         } //End of fire if statement
 
@@ -148,5 +171,37 @@ public class PlayerWeapon : MonoBehaviour
         laserLineL.enabled = true;
         yield return shotDuration;
         laserLineL.enabled = false;
+    }
+
+    private void ShotgunAmmoCheck()
+    {
+        for (int i = 0; i < lights.Length; i++)
+        {
+            if (i < shotgunAmmo)
+            {
+                lights[i].GetComponent<MeshRenderer>().material = shotgunLoaded; //Change material to loaded
+            }
+            else if (i >= shotgunAmmo)
+            {
+                lights[i].GetComponent<MeshRenderer>().material = shotgunBlank; //Change material to blank
+            }
+        }
+    }
+
+    public void SwapWeapon()
+    {
+        if (selectedWeapon == 0)
+        {
+            selectedWeapon = 1; //Select shotgun
+            ShotgunAmmoCheck();
+        }
+        else if (selectedWeapon == 1)
+        {
+            selectedWeapon = 0; //Select pistol
+            for (int i = 0; i < lights.Length; i++)
+            {
+                lights[i].GetComponent<MeshRenderer>().material = lightsNormal; //Change material to normal blue lights
+            }
+        }
     }
 }

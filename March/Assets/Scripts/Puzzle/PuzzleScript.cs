@@ -758,13 +758,13 @@ public class PuzzleScript : MonoBehaviour
     }
 
 
-    void Restart()
+    void Restart() //Restart the puzzle, return all pieces to original positions
     {
         for (int i = 0; i < puzzleSize; i++)
         {
             for (int j = 0; j < puzzleSize; j++)
             {
-                pieces[i, j] = null; //Clear the array
+                pieces[i, j] = null; //Clear the pieces array
             }
         }
 
@@ -781,11 +781,11 @@ public class PuzzleScript : MonoBehaviour
     }
 
 
-    IEnumerator WinCo()
+    IEnumerator WinCo() //Run when the player completes the puzzle
     {
         lockPuzzle = true;
 
-        yield return new WaitForSeconds(.5f);
+        yield return new WaitForSeconds(.5f); //Slight delay for pieces to finish moving and to give the player a pause after completing
 
         if (opensDoor)
         {

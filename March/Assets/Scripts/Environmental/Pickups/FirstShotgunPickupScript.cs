@@ -3,16 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class FirstShotgunPickupScript : MonoBehaviour
-{
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+{ //Used in Level2 when the player recieves the shotgun upgrade for their blaster
+    public PlayerWeapon playerWeaponScript;
 
-    // Update is called once per frame
-    void Update()
+    private void OnTriggerEnter(Collider other)
     {
-        
+        if (other.CompareTag("Player"))
+        {
+            playerWeaponScript.hasShotgun = true; //Enable the shotgun
+            playerWeaponScript.shotgunAmmo = 8; //Set shotgun ammo to the maximum (8)
+
+            playerWeaponScript.SwapWeapon(); //Swap the weapon to the shotgun
+
+            this.gameObject.SetActive(false); //Deactivate this object
+        }
     }
 }

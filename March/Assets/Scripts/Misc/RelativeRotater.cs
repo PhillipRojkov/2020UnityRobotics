@@ -30,6 +30,19 @@ public class RelativeRotater : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (up)
+        {
+            rotateAxis = transform.up;
+        }
+        if (right)
+        {
+            rotateAxis = transform.right;
+        }
+        if (forward)
+        {
+            rotateAxis = transform.forward;
+        }
+
         transform.RotateAround(transform.position, rotateAxis, rotateSpeed); ;        
     }
 }

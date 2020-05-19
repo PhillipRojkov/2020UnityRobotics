@@ -2543,7 +2543,7 @@ GameObject:
   - component: {fileID: 5640939728938803701}
   - component: {fileID: 6467794111207566855}
   m_Layer: 0
-  m_Name: SpiderBot
+  m_Name: SpiderBotLvl2Anim
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2611,6 +2611,8 @@ MonoBehaviour:
   maxDistance: 1
   groundLayer: 9
   legMoveSpeed: 10
+  slowGate: 0
+  fastGate: 1
 --- !u!114 &895263906542496225
 MonoBehaviour:
   m_ObjectHideFlags: 0

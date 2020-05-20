@@ -53,7 +53,7 @@ public class SpiderBotScript : MonoBehaviour
         direction = player.transform.position - linecastOrigin.position; //Direction from enemy to player
         direction = direction.normalized; //Set magnitude = 1
 
-        if (Physics.Raycast(linecastOrigin.position, direction, out hit, 100)) //Raycasts towards player; player detection
+        if (Physics.Raycast(linecastOrigin.position, direction, out hit, 100, 2)) //Raycasts towards player; player detection
         {
             if (hit.transform.gameObject.CompareTag("Player")) //The player is visible
             {
@@ -72,7 +72,7 @@ public class SpiderBotScript : MonoBehaviour
         }
 
         RaycastHit groundCheck; //For distance alignment with the ground normal
-        if (Physics.Raycast(transform.position, Vector3.down, out groundCheck, 5))
+        if (Physics.Raycast(transform.position, Vector3.down, out groundCheck, 5, 2))
         {
             transform.position = new Vector3(transform.position.x, groundCheck.point.y + walkHeight, transform.position.z); //Place the body  at walkHeight units above the ground
         }
@@ -83,7 +83,7 @@ public class SpiderBotScript : MonoBehaviour
             Vector3 raycastDirection = new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle)); //Creates a vector3 with x and z coords to point in the angle direction for raycast
 
             RaycastHit obstacleHit;
-            if (Physics.Raycast(transform.position, raycastDirection, out obstacleHit, obstacleAvoidanceDistance)) //Raycast to see if anything is closer than obstacleAvoidanceDistance in the angle direction
+            if (Physics.Raycast(transform.position, raycastDirection, out obstacleHit, obstacleAvoidanceDistance, 2)) //Raycast to see if anything is closer than obstacleAvoidanceDistance in the angle direction
             {
                 //Debug.DrawLine(transform.position, obstacleHit.point, Color.red, Time.deltaTime); //Visualize the obstalce detection rays
                 Vector3 obstacletoEnemyDirection = transform.position - obstacleHit.point; //Creates a vector3 direction that points from the obstacle to the enemy

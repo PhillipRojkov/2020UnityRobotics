@@ -7139,7 +7139,7 @@ GameObject:
   - component: {fileID: 195672120}
   - component: {fileID: 195672122}
   - component: {fileID: 195672121}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Trigger3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10804,7 +10804,7 @@ GameObject:
   - component: {fileID: 339734120}
   - component: {fileID: 339734122}
   - component: {fileID: 339734121}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Trigger1Close
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -18067,7 +18067,7 @@ GameObject:
   - component: {fileID: 550651404}
   - component: {fileID: 550651406}
   - component: {fileID: 550651405}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Trigger2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -21078,7 +21078,7 @@ GameObject:
   - component: {fileID: 659138241}
   - component: {fileID: 659138240}
   - component: {fileID: 659138239}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Level2Load
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -26460,7 +26460,7 @@ GameObject:
   - component: {fileID: 852529028}
   - component: {fileID: 852529030}
   - component: {fileID: 852529029}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Text (TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -30070,7 +30070,7 @@ GameObject:
   - component: {fileID: 984207461}
   - component: {fileID: 984207463}
   - component: {fileID: 984207462}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Trigger1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -33740,7 +33740,7 @@ GameObject:
   - component: {fileID: 1134446340}
   - component: {fileID: 1134446342}
   - component: {fileID: 1134446341}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Text (TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}

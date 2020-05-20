@@ -128,12 +128,18 @@ public class PlayerWeapon : MonoBehaviour
                         if (sgHit.transform.gameObject.GetComponent<EnemyScript>()) //Check if standard enemy
                         {
                             enemyScript = sgHit.transform.gameObject.GetComponent<EnemyScript>(); //Apply damage to enemy
-                            enemyScript.health -= shotgunDamage - shotgunDamage * shotgunDamageFalloff * distance; //Linearly decrease damage taken as distance increases. for a shotgunDamageFalloff of .1, the damage taken after 1 unit of distance is 90%
+                            if (shotgunDamage - shotgunDamage * shotgunDamageFalloff * distance > 0) //Ensure that negative damage is not dealt
+                            {
+                                enemyScript.health -= shotgunDamage - shotgunDamage * shotgunDamageFalloff * distance; //Linearly decrease damage taken as distance increases. for a shotgunDamageFalloff of .1, the damage taken after 1 unit of distance is 90%
+                            }
                         }
                         else if (sgHit.transform.gameObject.GetComponent<SpiderBotScript>())
                         {
                             spiderBotScript = sgHit.transform.gameObject.GetComponent<SpiderBotScript>(); //Apply damage to enemy
-                            spiderBotScript.health -= shotgunDamage - shotgunDamage * shotgunDamageFalloff * distance; //Linearly decrease damage taken as distance increases. for a shotgunDamageFalloff of .1, the damage taken after 1 unit of distance is 90%
+                            if (shotgunDamage - shotgunDamage * shotgunDamageFalloff * distance > 0) //Ensure that negative damage is not dealt
+                            {
+                                spiderBotScript.health -= shotgunDamage - shotgunDamage * shotgunDamageFalloff * distance; //Linearly decrease damage taken as distance increases. for a shotgunDamageFalloff of .1, the damage taken after 1 unit of distance is 90%
+                            }
                         }
                     }
                 }

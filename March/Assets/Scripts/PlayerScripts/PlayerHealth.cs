@@ -13,6 +13,12 @@ public class PlayerHealth : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //Infinite Health Cheat
+        if (Input.GetKeyDown("p"))
+        {
+            health += 100000;
+        }
+
         if (health <= 0)
         {
             PlayerDeath();

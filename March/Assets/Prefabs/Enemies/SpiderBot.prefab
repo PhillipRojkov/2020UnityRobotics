@@ -2633,6 +2633,10 @@ MonoBehaviour:
     type: 3}
   warningSphere: {fileID: 6872869020853888176}
   anim: {fileID: 5256902579022565813}
+  healthDrop: {fileID: 4306498320820114227, guid: c7904688bc79541249279bc7326e08d1,
+    type: 3}
+  ammoDrop: {fileID: 2229425106075819879, guid: 1d3cd9433b4b64711811aad977b23210,
+    type: 3}
   linecastOrigin: {fileID: 618406243392350450}
   seePlayer: 0
   explosionTriggerDistance: 2.5

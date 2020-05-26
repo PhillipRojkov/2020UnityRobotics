@@ -361,8 +361,11 @@ MonoBehaviour:
   waveScript: {fileID: 0}
   healthDrop: {fileID: 4306498320820114227, guid: c7904688bc79541249279bc7326e08d1,
     type: 3}
+  ammoDrop: {fileID: 2229425106075819879, guid: 1d3cd9433b4b64711811aad977b23210,
+    type: 3}
   t: 0
   timeBetweenMoves: 5
+  immobile: 0
   seePlayer: 0
   linecastOrigin: {fileID: 3919987438247270350}
   fireRate: 2

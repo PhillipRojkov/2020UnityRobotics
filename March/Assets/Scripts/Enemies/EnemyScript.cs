@@ -13,9 +13,11 @@ public class EnemyScript : MonoBehaviour
     private PlayerMove playerMove;
     [SerializeField] private WaveScript waveScript;
     [SerializeField] private GameObject healthDrop;
+    [SerializeField] private GameObject ammoDrop;
     //Movement
     [SerializeField] private float t;
     [SerializeField] private float timeBetweenMoves = 5;
+    public bool immobile = false;
     //Searching for Player
     [SerializeField] private bool seePlayer;
     [SerializeField] private Transform linecastOrigin;
@@ -35,6 +37,8 @@ public class EnemyScript : MonoBehaviour
     private float speed;
     [SerializeField] private bool isPartofWave = true;
 
+    private int layerMask = 1 << 2; //Layermask for ignore raycast layer
+
     private void Start()
     {
         playerMove = player.GetComponent<PlayerMove>();
@@ -44,7 +48,7 @@ public class EnemyScript : MonoBehaviour
     void Update()
     {
         //Wander
-        if (t > timeBetweenMoves && seePlayer == false)
+        if (t > timeBetweenMoves && seePlayer == false && !immobile)
         {
             if (i == 0)
             { //Randomize
@@ -76,7 +80,7 @@ public class EnemyScript : MonoBehaviour
         direction = player.transform.position - linecastOrigin.position;
         direction = direction.normalized;
 
-        if (Physics.Raycast(linecastOrigin.position, direction, out hit, 100))
+        if (Physics.Raycast(linecastOrigin.position, direction, out hit, 100, ~layerMask))
         {
             if (hit.transform.gameObject.CompareTag("Player"))
             {
@@ -112,6 +116,19 @@ public class EnemyScript : MonoBehaviour
             if (random < dropChance)
             {
                 Instantiate(healthDrop, transform.position, transform.rotation);
+            }
+
+            //Shotgun ammo drop
+            PlayerWeapon playerWeapon = player.GetComponent<PlayerWeapon>();
+            if (playerWeapon.hasShotgun)
+            {
+                float ammoDropChance = 1 / (playerWeapon.shotgunAmmo + 1);
+                float ammoRandom = Random.Range(0.1f, 1f); //Min is .1 because at 8/8 ammo, the ammoDropChance is 1% as opposed to 11%. At 0/8 ammo, drop rate is 100%
+
+                if (ammoRandom <= ammoDropChance)
+                {
+                    Instantiate(ammoDrop, transform.position, transform.rotation);
+                }
             }
 
             if (isPartofWave) //Wave logic

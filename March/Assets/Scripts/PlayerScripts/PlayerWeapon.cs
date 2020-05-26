@@ -24,7 +24,7 @@ public class PlayerWeapon : MonoBehaviour
 
     public int shotgunAmmo = 8; //8 is max
 
-    private int selectedWeapon = 0; //0 = pistol, 1 = shotgun
+    public int selectedWeapon = 0; //0 = pistol, 1 = shotgun
 
     [SerializeField] private float shotgunDamage = 130;
     [SerializeField] private float shotgunDamageFalloff = .1f; //Percent damage taken off after 1 unit of distance
@@ -41,6 +41,7 @@ public class PlayerWeapon : MonoBehaviour
     [SerializeField] private GameObject lightsParent;
     private GameObject[] lights;
 
+    private int layerMask = 1 << 2; //Layermask for ignore raycast layer
 
     private void Start()
     {
@@ -58,6 +59,13 @@ public class PlayerWeapon : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //Infinite Damage Cheat
+        if (Input.GetKeyDown("o"))
+        {
+            pistolDamage += 1000;
+            shotgunDamage += 1000;
+        }
+        
         if (Input.GetKeyDown("q") && hasShotgun)
         {
             SwapWeapon();
@@ -78,7 +86,7 @@ public class PlayerWeapon : MonoBehaviour
                 StartCoroutine(ShotEffect());
 
                 RaycastHit hit;
-                if (Physics.Raycast(camera.transform.position, camera.transform.forward, out hit, 100)) //Raycast shooting
+                if (Physics.Raycast(camera.transform.position, camera.transform.forward, out hit, 100, ~layerMask)) //Raycast shooting
                 {
                     laserLineL.SetPosition(1, hit.point);
                     if (hit.transform.gameObject.CompareTag("Enemy")) //Check if hit enemy
@@ -119,7 +127,7 @@ public class PlayerWeapon : MonoBehaviour
                 nextFire = Time.time + shotgunFireRate; //Timer for fire rate
 
                 RaycastHit sgHit;
-                if (Physics.Raycast(camera.transform.position, camera.transform.forward, out sgHit, 100)) //Raycast shooting
+                if (Physics.Raycast(camera.transform.position, camera.transform.forward, out sgHit, 100, ~layerMask)) //Raycast shooting
                 {
                     if (sgHit.transform.gameObject.CompareTag("Enemy")) //Check if hit enemy
                     {
@@ -128,9 +136,9 @@ public class PlayerWeapon : MonoBehaviour
                         if (sgHit.transform.gameObject.GetComponent<EnemyScript>()) //Check if standard enemy
                         {
                             enemyScript = sgHit.transform.gameObject.GetComponent<EnemyScript>(); //Apply damage to enemy
-                            if (shotgunDamage - shotgunDamage * shotgunDamageFalloff * distance > 0) //Ensure that negative damage is not dealt
+                            if (shotgunDamage - (shotgunDamage * shotgunDamageFalloff * distance) > 0) //Ensure that negative damage is not dealt
                             {
-                                enemyScript.health -= shotgunDamage - shotgunDamage * shotgunDamageFalloff * distance; //Linearly decrease damage taken as distance increases. for a shotgunDamageFalloff of .1, the damage taken after 1 unit of distance is 90%
+                                enemyScript.health -= shotgunDamage - (shotgunDamage * shotgunDamageFalloff * distance); //Linearly decrease damage taken as distance increases. for a shotgunDamageFalloff of .1, the damage taken after 1 unit of distance is 90%
                             }
                         }
                         else if (sgHit.transform.gameObject.GetComponent<SpiderBotScript>())
@@ -144,6 +152,11 @@ public class PlayerWeapon : MonoBehaviour
                     }
                 }
             }
+
+            else if (selectedWeapon == 1 && shotgunAmmo == 0 && hasShotgun)
+            {
+                SwapWeapon();
+            }
         } //End of fire if statement
 
         else if (Input.GetButtonUp("Fire1"))
@@ -154,7 +167,7 @@ public class PlayerWeapon : MonoBehaviour
         if (Input.GetButton("Use")) //Use button
             {
                 RaycastHit use;
-                if (Physics.Raycast(camera.transform.position, camera.transform.forward, out use, useDistance))
+                if (Physics.Raycast(camera.transform.position, camera.transform.forward, out use, useDistance, ~layerMask))
                 {
                     if (use.transform.gameObject.CompareTag("Puzzle")) //Is puzzle
                     {
@@ -179,7 +192,7 @@ public class PlayerWeapon : MonoBehaviour
         laserLineL.enabled = false;
     }
 
-    private void ShotgunAmmoCheck()
+    public void ShotgunAmmoCheck()
     {
         for (int i = 0; i < lights.Length; i++)
         {

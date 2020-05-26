@@ -11,6 +11,8 @@ public class SpiderBotScript : MonoBehaviour
     [SerializeField] private GameObject deathExplosion;
     [SerializeField] private GameObject warningSphere;
     [SerializeField] private Animator anim;
+    [SerializeField] private GameObject healthDrop;
+    [SerializeField] private GameObject ammoDrop;
     //Monobehaviours
     private PlayerMove playerMove;
     //Player Detection
@@ -37,6 +39,8 @@ public class SpiderBotScript : MonoBehaviour
 
     private IEnumerator yeetCoroutine;
 
+    private int layerMask = 1 << 2; //Layermask for ignore raycast layer
+
     // Start is called before the first frame update
     void Start()
     {
@@ -53,7 +57,7 @@ public class SpiderBotScript : MonoBehaviour
         direction = player.transform.position - linecastOrigin.position; //Direction from enemy to player
         direction = direction.normalized; //Set magnitude = 1
 
-        if (Physics.Raycast(linecastOrigin.position, direction, out hit, 100, 2)) //Raycasts towards player; player detection
+        if (Physics.Raycast(linecastOrigin.position, direction, out hit, 100, ~layerMask)) //Raycasts towards player; player detection
         {
             if (hit.transform.gameObject.CompareTag("Player")) //The player is visible
             {
@@ -72,7 +76,7 @@ public class SpiderBotScript : MonoBehaviour
         }
 
         RaycastHit groundCheck; //For distance alignment with the ground normal
-        if (Physics.Raycast(transform.position, Vector3.down, out groundCheck, 5, 2))
+        if (Physics.Raycast(transform.position, Vector3.down, out groundCheck, 5, ~layerMask))
         {
             transform.position = new Vector3(transform.position.x, groundCheck.point.y + walkHeight, transform.position.z); //Place the body  at walkHeight units above the ground
         }
@@ -83,7 +87,7 @@ public class SpiderBotScript : MonoBehaviour
             Vector3 raycastDirection = new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle)); //Creates a vector3 with x and z coords to point in the angle direction for raycast
 
             RaycastHit obstacleHit;
-            if (Physics.Raycast(transform.position, raycastDirection, out obstacleHit, obstacleAvoidanceDistance, 2)) //Raycast to see if anything is closer than obstacleAvoidanceDistance in the angle direction
+            if (Physics.Raycast(transform.position, raycastDirection, out obstacleHit, obstacleAvoidanceDistance, ~layerMask)) //Raycast to see if anything is closer than obstacleAvoidanceDistance in the angle direction
             {
                 //Debug.DrawLine(transform.position, obstacleHit.point, Color.red, Time.deltaTime); //Visualize the obstalce detection rays
                 Vector3 obstacletoEnemyDirection = transform.position - obstacleHit.point; //Creates a vector3 direction that points from the obstacle to the enemy
@@ -108,6 +112,28 @@ public class SpiderBotScript : MonoBehaviour
         if (health <= 0) //Death event
         {
             Instantiate(deathExplosion, transform.position, transform.rotation);
+
+            //Health drop
+            PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
+            float dropChance = 100 - playerHealth.health; //Gives a % chance for dropping health that increases as health is depleted
+            float random = Random.Range(0f, 100f);
+            if (random < dropChance)
+            {
+                Instantiate(healthDrop, transform.position, transform.rotation);
+            }
+
+            //Shotgun ammo drop
+            PlayerWeapon playerWeapon = player.GetComponent<PlayerWeapon>();
+            if (playerWeapon.hasShotgun)
+            {
+                float ammoDropChance = 1 / (playerWeapon.shotgunAmmo + 1);
+                float ammoRandom = Random.Range(0.1f, 1f); //Min is .1 because at 8/8 ammo, the ammoDropChance is 1% as opposed to 11%. At 0/8 ammo, drop rate is 100%
+
+                if (ammoRandom <= ammoDropChance)
+                {
+                    Instantiate(ammoDrop, transform.position, transform.rotation);
+                }
+            }
 
             Destroy(this.gameObject);
         }

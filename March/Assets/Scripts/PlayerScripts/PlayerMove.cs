@@ -21,6 +21,8 @@ public class PlayerMove : MonoBehaviour
 
     private float t;
 
+    private int layerMask = 1 << 2; //Layermask for ignore raycast layer
+
     private void Start()
     {
         speed = baseSpeed;
@@ -47,16 +49,16 @@ public class PlayerMove : MonoBehaviour
         bool groundCheckCentre = Physics.Raycast(playerCollider.bounds.center, Vector3.down, playerCollider.bounds.extents.y + 0.1f);
 
         Vector3 frontRay = playerCollider.bounds.center + transform.forward * playerCollider.radius; //Creates a vector3 position at the front edge of the player collider
-        bool groundCheckFront = Physics.Raycast(frontRay, Vector3.down, playerCollider.bounds.extents.y);
+        bool groundCheckFront = Physics.Raycast(frontRay, Vector3.down, playerCollider.bounds.extents.y, ~layerMask);
 
         Vector3 backRay = playerCollider.bounds.center + transform.forward * -playerCollider.radius; //Creates a vector3 position at the back edge of the player collider
-        bool groundCheckBack = Physics.Raycast(backRay, Vector3.down, playerCollider.bounds.extents.y);
+        bool groundCheckBack = Physics.Raycast(backRay, Vector3.down, playerCollider.bounds.extents.y, ~layerMask);
 
         Vector3 leftRay = playerCollider.bounds.center + transform.right * -playerCollider.radius; //Creates a vector3 position at the left edge of the player collider
-        bool groundCheckLeft = Physics.Raycast(leftRay, Vector3.down, playerCollider.bounds.extents.y);
-
+        bool groundCheckLeft = Physics.Raycast(leftRay, Vector3.down, playerCollider.bounds.extents.y, ~layerMask);
+        
         Vector3 rightRay = playerCollider.bounds.center + transform.right * playerCollider.radius; //Creates a vector3 position at the right edge of the player collider
-        bool groundCheckRight = Physics.Raycast(rightRay, Vector3.down, playerCollider.bounds.extents.y);
+        bool groundCheckRight = Physics.Raycast(rightRay, Vector3.down, playerCollider.bounds.extents.y, ~layerMask);
 
         if (groundCheckCentre || groundCheckFront || groundCheckBack || groundCheckLeft || groundCheckRight)
         {
